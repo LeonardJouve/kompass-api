@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ErrorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,5 @@ Route::get('/test', function (Request $request) {
         'test' => 'test',
     ], 200);
 });
+
+Route::resource('errors', ErrorController::class)->only(['index', 'store']);
