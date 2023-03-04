@@ -27,8 +27,7 @@ class ErrorController extends Controller
     public function store(Request $request)
     {
         $validator = $request->validate([
-            'message' => 'required|string',
-            'values' => 'sometimes|array',
+            'values' => 'required|array',
             'url' => 'required|string',
             'status' => 'required|integer',
         ]);

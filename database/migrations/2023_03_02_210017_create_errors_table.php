@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('errors', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('message');
             $table->json('values');
             $table->string('url');
             $table->integer('status');

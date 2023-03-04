@@ -27,7 +27,6 @@ class ErrorTest extends TestCase
     public function test_error_store()
     {
         $response = $this->post('api/errors', [
-            'message' => 'message',
             'values' => [
                 'value' => 'value',
             ],
@@ -35,6 +34,8 @@ class ErrorTest extends TestCase
             'status' => 400,
         ]);
 
+        $this->assertIsObject($response->getData());
+        $this->assertEquals(true, $response->getData()->data);
         $response->assertStatus(201);
     }
 }

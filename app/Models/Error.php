@@ -10,7 +10,6 @@ class Error extends Model
     use HasFactory;
 
     protected $fillable = [
-        'message',
         'values',
         'url',
         'status',
@@ -18,9 +17,5 @@ class Error extends Model
 
     protected $casts = [
         'values' => 'object',
-    ];
-
-    protected $attributes = [
-        'values' => '{}',
     ];
 }
