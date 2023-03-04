@@ -28,18 +28,14 @@ class ErrorController extends Controller
     {
         $validator = $request->validate([
             'message' => 'required|string',
-            'values' => 'sometimes|nullable|json',
+            'values' => 'sometimes|array',
             'url' => 'required|string',
             'status' => 'required|integer',
         ]);
 
-        $error = new Error();
-        $error->message = $validator['message'];
-        $error->values = $validator['values'] ?? null;
-        $error->url = $validator['url'];
-        $error->status = $validator['status'];
+        $result = Error::create($validator)->save();
         
-        return $error->save() ? response()->json([
+        return $result ? response()->json([
             'data' => true,
         ], 201) : response()->json([
             'error' => true,

@@ -28,9 +28,9 @@ class ErrorTest extends TestCase
     {
         $response = $this->post('api/errors', [
             'message' => 'message',
-            'values' => json_encode([
+            'values' => [
                 'value' => 'value',
-            ]),
+            ],
             'url' => 'url',
             'status' => 400,
         ]);
