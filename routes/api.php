@@ -17,8 +17,8 @@ use App\Http\Controllers\ErrorController;
 
 Route::get('/test', function (Request $request) {
     return response()->json([
-        'message' => 'test',
-    ], 400);
+        'test' => 'test',
+    ], 200);
 });
 
 Route::resource('errors', ErrorController::class)->only(['index', 'store']);
