@@ -10,12 +10,12 @@ class Error extends Model
     use HasFactory;
 
     protected $fillable = [
-        'values',
+        'data',
         'url',
         'status',
     ];
 
     protected $casts = [
-        'values' => 'object',
+        'data' => 'object',
     ];
 }

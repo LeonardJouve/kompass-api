@@ -27,7 +27,7 @@ class ErrorTest extends TestCase
     public function test_error_store()
     {
         $response = $this->post('api/errors', [
-            'values' => [
+            'data' => [
                 'value' => 'value',
             ],
             'url' => 'url',
