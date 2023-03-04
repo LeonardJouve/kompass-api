@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->string('message');
-            $table->json('values')->nullable();
+            $table->json('values');
             $table->string('url');
             $table->integer('status');
         });
