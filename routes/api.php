@@ -16,12 +16,6 @@ use App\Http\Controllers\ConfigController;
 |
 */
 
-Route::get('/test', function (Request $request) {
-    return response()->json([
-        'test' => 'test',
-    ], 200);
-});
-
 Route::resource('errors', ErrorController::class)->only(['index', 'store']);
 
 Route::resource('config', ConfigController::class)->only(['index']);
