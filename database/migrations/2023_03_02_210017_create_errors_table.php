@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->json('data');
             $table->string('url');
-            $table->integer('status');
+            $table->integer('status')->nullable();
         });
     }
 

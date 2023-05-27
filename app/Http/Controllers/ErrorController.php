@@ -29,7 +29,7 @@ class ErrorController extends Controller
         $validator = $request->validate([
             'data' => 'required|array',
             'url' => 'required|string',
-            'status' => 'required|integer',
+            'status' => 'integer',
         ]);
 
         $result = Error::create($validator)->save();
