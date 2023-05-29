@@ -25,7 +25,7 @@ class TokenController extends Controller
      
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+                'message' => ['api.rest.error.auth.credentials'],
             ]);
         }
         return response()->json(['token' => $user->createToken($request->email)->plainTextToken]);
