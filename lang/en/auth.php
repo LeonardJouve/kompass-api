@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'failed' => 'api.rest.error.auth.credentials',
+    'failed' => 'api.rest.error.auth.invalid',
     'password' => 'api.rest.error.auth.password',
     'throttle' => 'api.rest.error.auth.throttle',
 ];

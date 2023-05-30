@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\OpenTripMapController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,10 @@ use App\Http\Controllers\OpenTripMapController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::post('register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
+
+Route::post('login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
 
 Route::resource('errors', ErrorController::class)->only(['index', 'store']);
 
