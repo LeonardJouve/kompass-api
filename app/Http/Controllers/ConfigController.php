@@ -17,6 +17,6 @@ class ConfigController extends Controller
             'websocket_host' => env('PUSHER_HOST', '127.0.0.1'),
             'websocket_port' => env('PUSHER_PORT', 6001),
             'websocket_key' => env('PUSHER_APP_KEY', 'pusher-app-key'),
-        ]);
+        ], 200);
     }
 }
