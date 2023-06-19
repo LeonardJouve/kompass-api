@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Models\Item;
 use Illuminate\Support\ItemNotFoundException;
 
@@ -20,11 +19,11 @@ class ItemController extends Controller
 
     public function store(Request $request)
     {
-        $validatedItem = Validator::make($request->all(), [
+        $validatedItem = $request->validate([
             'category' => 'required|string|in:food,equipement,weapon,tool',
             'name' => 'required|string',
             'amount' => 'required|integer',
-        ])->validate();
+        ]);
             
         $item = new Item();
         $item->user_id = Auth::user()->id;

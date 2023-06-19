@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Item::class);
     }
+
+    public function poiTimers(): HasMany
+    {
+        return $this->hasMany(PoiTimer::class);
+    }
 }

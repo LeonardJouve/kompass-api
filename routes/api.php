@@ -27,5 +27,7 @@ Route::resource('errors', ErrorController::class)->only(['index', 'store']);
 Route::resource('config', ConfigController::class)->only(['index']);
 
 Route::resource('opentripmap', OpenTripMapController::class)->only(['index']);
+Route::get('opentripmap/search', [OpenTripMapController::class, 'search']);
 
-Route::resource('items', ItemController::class);
+
+Route::resource('items', ItemController::class)->only(['index', 'store', 'destroy']);
