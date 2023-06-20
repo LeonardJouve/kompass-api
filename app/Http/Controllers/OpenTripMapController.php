@@ -95,7 +95,11 @@ class OpenTripMapController extends Controller
         $poiTimer->save();
         
         $foundItems = OpenTripMapUtils::searchItems($kind);
-        
+
+        // TODO
+        // seed loot table
+        // seed item table
+        // add items to user
         return response()->json($foundItems, 200);
     }
 }
