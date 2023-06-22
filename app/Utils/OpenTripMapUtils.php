@@ -32,7 +32,7 @@ class OpenTripMapUtils {
         'amusements' => [],
         'adult' => [],
         'garbage' => [
-            ['amount' => 7, 'name' => 'wood'],
+            ['amount' => 6, 'name' => 'wood'],
         ],
     ];
 
@@ -69,7 +69,7 @@ class OpenTripMapUtils {
     {
         $kindLoot = self::$lootTable[$kind];
         $itemAmount = rand(1, env('OPEN_TRIP_MAP_SEARCH_MAX_ITEM_AMOUNT'));
-        
+
         if (!$kindLoot) {
             return [];
         }
@@ -79,16 +79,19 @@ class OpenTripMapUtils {
         for ($i = 0; $i < $itemAmount; $i++) {
             $item = self::searchItem($kindLoot);
             
-            $existingItem = $foundItems->first(function ($existingItem) use ($item) {
-                return strcmp($existingItem['name'], $item['name']) === 0;
+            $itemAlreadyExists = false;
+            
+            $foundItems->transform(function ($foundItem) use ($item, &$itemAlreadyExists) {
+                if (strcmp($foundItem['name'], $item['name']) === 0) {
+                    $foundItem['amount'] += $item['amount'];
+                    $itemAlreadyExists = true;
+                }
+                return $foundItem;
             });
 
-            if ($existingItem !== null) {
-                $existingItem['amount'] += $item['amount'];
-                continue;
+            if (!$itemAlreadyExists) {
+                $foundItems->push($item);
             }
-
-            $foundItems->push($item);
         }
 
         return $foundItems;
