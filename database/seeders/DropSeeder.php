@@ -9,12 +9,13 @@ use Illuminate\Support\Collection;
 class DropSeeder extends Seeder
 {
     
-    private function transformDrops(string $kind, Collection &$collection)
+    private function transformDrops(string $kind, Collection &$drops)
     {
         $items = DB::table('available_items')->pluck('id', 'name');
-        $collection->transform(function ($drop) use ($items, $kind) {
+        $drops->transform(function ($drop) use ($items, $kind) {
             $drop['kind'] = $kind;
             $drop['item_id'] = $items[$drop['name']];
+            $drop['rate'] ??= null; 
             unset($drop['name']);
             return $drop;
         });
@@ -24,16 +25,9 @@ class DropSeeder extends Seeder
     {
 
         $foods = new Collection([
-            [
-                'rate' => 20,
-                'amount' => 5,
-                'name' => '',
-            ],
-            [
-                'rate' => 20,
-                'amount' => 5,
-                'name' => '',
-            ],
+            ['rate' => 30, 'amount' => 3, 'name' => 'mushroom'],
+            ['rate' => 20, 'amount' => 4, 'name' => 'berry'],
+            ['rate' => 30, 'amount' => 3, 'name' => 'lettuce'],
         ]);
         self::transformDrops('foods', $foods);
 
@@ -68,10 +62,10 @@ class DropSeeder extends Seeder
         self::transformDrops('adult', $adult);
 
         $garbage = new Collection([
-            [
-                'amount' => 6,
-                'name' => '',
-            ],
+            ['amount' => 6, 'name' => 'wood'],
+            ['amount' => 4, 'name' => 'stick'],
+            ['amount' => 3, 'name' => 'copper_powder'],
+            ['amount' => 2, 'name' => 'zinc_powder'],
         ]);
         self::transformDrops('garbage', $garbage);
 

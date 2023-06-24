@@ -20,7 +20,7 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $validatedItem = $request->validate([
-            'category' => 'required|string|in:food,equipement,weapon,tool',
+            'category' => 'required|string|in:ressource,food,equipement,weapon,tool',
             'name' => 'required|string',
             'amount' => 'required|integer',
         ]);

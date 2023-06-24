@@ -4,9 +4,11 @@ namespace App\Utils;
 
 use App\Models\Item;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class OpenTripMapUtils {
+class OpenTripMapUtils
+{
     public static function findValidKind(string $kinds)
     {
         foreach (explode(',', env('OPEN_TRIP_MAP_KINDS')) as $validKind) {
@@ -17,83 +19,64 @@ class OpenTripMapUtils {
         return null;
     }
 
-    private static $lootTable = [
-        'foods' => [
-            ['rate' => 20, 'amount' => 5, 'name' => 'mushroom'],
-        ],
-        'shops' => [],
-        'transport' => [],
-        'banks' => [],
-        'natural' => [],
-        'accomodations' => [],
-        'industrial_facilities' => [],
-        'religion' => [],
-        'sport' => [],
-        'amusements' => [],
-        'adult' => [],
-        'garbage' => [
-            ['amount' => 6, 'name' => 'wood'],
-        ],
-    ];
-
-    private static function searchItem($kindLoot)
+    private static function searchItem($userId, $drops, $garbage)
     {
-        $item = null;
+        $selectedDrop = null;
         $target = rand(1, 100);
         $value = 0;
 
-        foreach ($kindLoot as $loot) {
-            $value += $loot['rate'];
+        foreach ($drops as $drop) {
+            $value += $drop->rate;
             if ($value >= $target) {
-                $item = $loot;
+                $selectedDrop = $drop;
                 break;
             }
         }
 
-        if ($item === null) {
-            $garbage = self::$lootTable['garbage'];
+        if ($selectedDrop === null) {
             $value = $target % count($garbage);
-            $itemKey = array_keys($garbage)[$value];
-            $item = $garbage[$itemKey];
+            $selectedDrop = $garbage->get($value);
         }
 
-        $amount = rand(1, $item['amount']);
+        $amount = rand(1, $selectedDrop->amount);
 
-        return [
-            'name' => $item['name'],
-            'amount' => $amount,
-        ];
+        $item = new Item();
+        $item->user_id = $userId;
+        $item->item_id = $selectedDrop->item_id;
+        $item->amount = $amount;
+        $item->save();
+
+        return ItemUtils::formatItem($item);
     }
 
-    public static function searchItems(string $kind)
+    public static function searchItems($userId, string $kind)
     {
-        $kindLoot = self::$lootTable[$kind];
-        $itemAmount = rand(1, env('OPEN_TRIP_MAP_SEARCH_MAX_ITEM_AMOUNT'));
+        $drops = DB::table('drops')->where('kind', '=', $kind)->get();
+        $garbage = DB::table('drops')->where('kind', '=', 'garbage')->get();
+        $amount = rand(1, env('OPEN_TRIP_MAP_SEARCH_MAX_ITEM_AMOUNT'));
 
-        if (!$kindLoot) {
-            return [];
-        }
-
-        $foundItems = new Collection();
+        $items = new Collection();
         
-        for ($i = 0; $i < $itemAmount; $i++) {
-            $item = self::searchItem($kindLoot);
+        for ($i = 0; $i < $amount; $i++) {
+            $newItem = self::searchItem($userId, $drops, $garbage);
             
             $itemAlreadyExists = false;
             
-            $foundItems->transform(function ($foundItem) use ($item, &$itemAlreadyExists) {
-                if (strcmp($foundItem['name'], $item['name']) === 0) {
-                    $foundItem['amount'] += $item['amount'];
+            $items->transform(function ($item) use ($newItem, &$itemAlreadyExists) {
+                if (strcmp($item->item_id, $newItem->item_id) === 0) {
+                    $item->amount += $newItem->amount;
                     $itemAlreadyExists = true;
                 }
-                return $foundItem;
+                return $item;
             });
 
-            if (!$itemAlreadyExists) {
-                $foundItems->push($item);
+            if ($itemAlreadyExists) {
+                continue;
             }
+
+            $items->push($newItem);
         }
 
-        return $foundItems;
+        return $items;
     }
 }

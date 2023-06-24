@@ -11,6 +11,7 @@ class Item extends Model
     use HasFactory;
 
     protected $hidden = [
+        'id',
         'user_id',
     ];
 

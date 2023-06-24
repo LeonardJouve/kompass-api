@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Utils\OpenTripMapUtils;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PoiTimer;
+use Illuminate\Support\Collection;
 
 class OpenTripMapController extends Controller
 {
@@ -34,16 +35,17 @@ class OpenTripMapController extends Controller
         }
 
         $poiTimers = Auth::user()->poiTimers;
-        $pois = $response->json();
+        $pois = new Collection($response->json());
         
-        foreach ($poiTimers as $poiTimer) {
-            $poiIndex = collect($pois)->search(function($poi) use ($poiTimer) {
-                return $poi['xid'] === $poiTimer->xid;
+        $pois->transform(function ($poi) use ($poiTimers) {
+            $poiTimer = $poiTimers->first(function ($poiTimer) use ($poi) {
+                return strcmp($poiTimer->xid, $poi['xid']) === 0;
             });
-            if ($poiIndex !== false) {
-                $pois[$poiIndex]['available_at'] = $poiTimer['available_at'];
+            if ($poiTimer) {
+                $poi['available_at'] = $poiTimer->available_at;
             }
-        }
+            return $poi;
+        });
 
         return response()->json($pois, 200);
     }
@@ -53,7 +55,7 @@ class OpenTripMapController extends Controller
             'xid' => 'required|string',
         ]);
 
-        $response = Http::get('http://api.opentripmap.com/0.1/en/places/xid/' . $validatedParams["xid"], [
+        $response = Http::get('http://api.opentripmap.com/0.1/en/places/xid/' . $validatedParams['xid'], [
             'apikey' => env('OPEN_TRIP_MAP_API_KEY'),
         ]);
  
@@ -74,14 +76,15 @@ class OpenTripMapController extends Controller
         }
 
         $user = Auth::user();
+        $userId = $user->id;
 
         $poiTimers = $user->poiTimers;
 
         foreach ($poiTimers as $poiTimer) {
-            if (now() > $poiTimer['available_at']) {
+            if (now() > $poiTimer->available_at) {
                 $poiTimer->delete();
                 continue;
-            } else if (strcmp($poiTimer['xid'], $validatedParams["xid"]) == 0) {
+            } else if (strcmp($poiTimer->xid, $validatedParams['xid']) == 0) {
                 return response()->json([
                     'message' => 'api.rest.error.unprocessable_entity',
                 ], 422);
@@ -89,17 +92,13 @@ class OpenTripMapController extends Controller
         }
 
         $poiTimer = new PoiTimer();
-        $poiTimer['user_id'] = $user->id;
-        $poiTimer['xid'] = $validatedParams["xid"];
-        $poiTimer['available_at'] = now()->addMinutes(env('OPEN_TRIP_MAP_POI_COOLDOWN'));
+        $poiTimer->user_id = $userId;
+        $poiTimer->xid = $validatedParams['xid'];
+        $poiTimer->available_at = now()->addMinutes(env('OPEN_TRIP_MAP_POI_COOLDOWN'));
         $poiTimer->save();
         
-        $foundItems = OpenTripMapUtils::searchItems($kind);
+        $items = OpenTripMapUtils::searchItems($userId, $kind);
 
-        // TODO
-        // seed loot table
-        // seed item table
-        // add items to user
-        return response()->json($foundItems, 200);
+        return response()->json($items, 200);
     }
 }
