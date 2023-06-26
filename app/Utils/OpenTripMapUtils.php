@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Models\Item;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -44,7 +45,10 @@ class OpenTripMapUtils
         $item->user_id = $userId;
         $item->item_id = $selectedDrop->item_id;
         $item->amount = $amount;
-        $item->save();
+
+        $items = Auth::user()->items;
+
+        ItemUtils::mergeItem($items, $item);
 
         return ItemUtils::formatItem($item);
     }

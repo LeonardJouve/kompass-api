@@ -24,6 +24,19 @@ class ItemUtils
         });
     }
 
+    public static function mergeItem($existingItems, $item)
+    {
+        $existingItem = $existingItems->first(function ($existingItem) use ($item) {
+            return $existingItem->item_id === $item['item_id'];
+        });
+        if ($existingItem) {
+            $existingItem->amount += $item->amount;
+            $existingItem->save();
+            return;
+        }
+        $item->save();
+    }
+
     public static function deleteItem($items, $itemId, $amount)
     {
         $item = $items->where('item_id', '=', $itemId)->firstOrFail();
