@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ItemUtils
 {
@@ -14,5 +15,26 @@ class ItemUtils
         $newItem->category = $availableItem->category;
 
         return $newItem;
+    }
+
+    public static function formatItems($items)
+    {
+        return $items->map(function ($item) {
+            return self::formatItem($item);
+        });
+    }
+
+    public static function deleteItem($items, $itemId, $amount)
+    {
+        $item = $items->where('item_id', '=', $itemId)->firstOrFail();
+        if ($item->amount < $amount) {
+            throw new UnprocessableEntityHttpException();
+        }
+        if ($item->amount == $amount) {
+            $item->delete();
+            return;
+        }
+        $item->amount -= $amount;
+        $item->save();
     }
 }

@@ -5,42 +5,31 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Models\Item;
+use App\Utils\ItemUtils;
 use Illuminate\Support\ItemNotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ItemController extends Controller
 {
     public function index()
     {
+        $items = Auth::user()->items;
+
         return response()->json(
-            Auth::user()->items
+            ItemUtils::formatItems($items)
         , 200);
-    }
-
-    public function store(Request $request)
-    {
-        $validatedItem = $request->validate([
-            'category' => 'required|string|in:ressource,food,equipement,weapon,tool',
-            'name' => 'required|string',
-            'amount' => 'required|integer',
-        ]);
-            
-        $item = new Item();
-        $item->user_id = Auth::user()->id;
-        $item->category = $validatedItem['category'];
-        $item->name = $validatedItem['name'];
-        $item->amount = $validatedItem['amount'];
-        $item->save();
-
-        return response()->json([
-            'item' => $item,
-        ], 201);
     }
 
     public function destroy(Request $request, $itemId)
     {
         try {
-            Auth::user()->items->where('id', $itemId)->firstOrFail()->delete();
+            $validatedParams = $request->validate([
+                'amount' => 'required|numeric|min:1',
+            ]);
+
+            $items = Auth::user()->items;
+
+            ItemUtils::deleteItem($items, $itemId, $validatedParams['amount']);
 
             return response()->json([
                 'status' => 'ok',
@@ -49,6 +38,10 @@ class ItemController extends Controller
             return response()->json([
                 'message' => 'api.rest.error.not_found',
             ], 404);
+        } catch (UnprocessableEntityHttpException $error) {
+            return response()->json([
+                'message' => 'api.rest.error.unprocessable_entity'
+            ], 422);
         }
     }
 }
