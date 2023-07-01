@@ -18,9 +18,8 @@ use App\Http\Controllers\ItemController;
 |
 */
 
-Route::post('register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
-
-Route::post('login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
+Route::post('auth/register', [AuthController::class, 'register'])->withoutMiddleware(['auth:sanctum']);
+Route::post('auth/login', [AuthController::class, 'login'])->withoutMiddleware(['auth:sanctum']);
 
 Route::resource('errors', ErrorController::class)->only(['index', 'store']);
 

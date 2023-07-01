@@ -26,7 +26,7 @@ class ItemUtils
 
     public static function mergeItem($existingItems, $item)
     {
-        $existingItem = $existingItems->first(function ($existingItem) use ($item) {
+        $existingItem = $existingItems->first(function (&$existingItem) use ($item) {
             return $existingItem->item_id === $item['item_id'];
         });
         if ($existingItem) {
