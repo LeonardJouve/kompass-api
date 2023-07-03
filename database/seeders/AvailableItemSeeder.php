@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\AvailableItem;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AvailableItemSeeder extends Seeder
 {
@@ -21,7 +21,6 @@ class AvailableItemSeeder extends Seeder
             ['name' => 'copper_plate', 'category' => 'ressource'],
             ['name' => 'zinc_plate', 'category' => 'ressource'],
             ['name' => 'brass_plate', 'category' => 'ressource'],
-            ['name' => 'copper_boots', 'category' => 'equipement'],
             ['name' => 'mushroom', 'category' => 'food'],
             ['name' => 'berry', 'category' => 'food'],
             ['name' => 'mushroom_soup', 'category' => 'food'],
@@ -29,5 +28,15 @@ class AvailableItemSeeder extends Seeder
             ['name' => 'lettuce', 'category' => 'food'],
             ['name' => 'salad', 'category' => 'food'],
         ]);
+
+        $availableItems = DB::table('available_items')->get();
+        foreach ($availableItems as $availableItem) {
+            $name = $availableItem->name . '.png';
+            if (!Storage::disk('local')->exists($name)) {
+                throw new \Exception('Image ' . $name . ' not found');
+            }
+            $image = Storage::disk('local')->get($name);
+            Storage::disk('items')->put($availableItem->id . '.png', $image);
+        }
     }
 }

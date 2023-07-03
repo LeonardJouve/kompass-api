@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Utils\ItemUtils;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -43,5 +44,20 @@ class ItemController extends Controller
                 'message' => 'api.rest.error.unprocessable_entity'
             ], 422);
         }
+    }
+
+    public function image(Request $request, $itemId)
+    {
+        $imageName = $itemId . '.png';
+
+        if (!Storage::disk('items')->exists($imageName)) {
+            return response()->json([
+                'message' => 'api.rest.error.not_found',
+            ], 404);
+        }
+
+        $fileContent = Storage::disk('items')->get($imageName);
+
+        return response($fileContent, 200)->header('Content-Type', 'image/png');
     }
 }
