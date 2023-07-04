@@ -15,3 +15,7 @@ DB_PORT=3306
 DB_DATABASE=kompass
 DB_USERNAME=
 DB_PASSWORD=
+
+php artisan storage:link
+php artisan db:seed --class=AvailableItemSeeder
+php artisan db:seed --class=DropSeeder
