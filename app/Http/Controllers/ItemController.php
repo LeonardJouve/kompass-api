@@ -46,27 +46,4 @@ class ItemController extends Controller
             ], 422);
         }
     }
-
-    public function image(Request $request, $itemId)
-    {
-        $item = DB::table('available_items')->where('id', '=', $itemId)->first();
-
-        if (!$item) {
-            return response()->json([
-                'message' => 'api.rest.error.unprocessable_entity'
-            ], 422);
-        }
-
-        $imageName = $item->name . '.png';
-
-        if (!Storage::disk('items')->exists($imageName)) {
-            return response()->json([
-                'message' => 'api.rest.error.not_found',
-            ], 404);
-        }
-
-        $fileContent = Storage::disk('items')->get($imageName);
-
-        return response($fileContent, 200)->header('Content-Type', 'image/png');
-    }
 }

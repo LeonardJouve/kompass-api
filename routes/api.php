@@ -29,4 +29,3 @@ Route::resource('opentripmap', OpenTripMapController::class)->only(['index']);
 Route::get('opentripmap/search', [OpenTripMapController::class, 'search']);
 
 Route::resource('items', ItemController::class)->only(['index', 'destroy']);
-Route::get('items/image/{item_id}', [ItemController::class, 'image'])->where('item_id', '[0-9]+');
