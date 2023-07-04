@@ -29,13 +29,6 @@ return [
     */
 
     'disks' => [
-        'local' => [
-            'driver' => 'local',
-            'root' => storage_path('app'),
-            'visibility' => 'private',
-            'throw' => false,
-        ],
-
         'items' => [
             'driver' => 'local',
             'root' => storage_path('app/public/items'),

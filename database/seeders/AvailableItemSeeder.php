@@ -32,11 +32,9 @@ class AvailableItemSeeder extends Seeder
         $availableItems = DB::table('available_items')->get();
         foreach ($availableItems as $availableItem) {
             $name = $availableItem->name . '.png';
-            if (!Storage::disk('local')->exists($name)) {
+            if (!Storage::disk('items')->exists($name)) {
                 throw new \Exception('Image ' . $name . ' not found');
             }
-            $image = Storage::disk('local')->get($name);
-            Storage::disk('items')->put($availableItem->id . '.png', $image);
         }
     }
 }
