@@ -14,7 +14,6 @@ php.ini:
     - DB_DATABASE=kompass
     - DB_USERNAME=
     - DB_PASSWORD=
-
-php artisan storage:link
+    - OPEN_TRIP_MAP_API_KEY=
 
 php artisan db:seed
