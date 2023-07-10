@@ -13,6 +13,7 @@ class AuthController extends Controller
     {
         $createNewUser = new CreateNewUser();
         $user = $createNewUser->create($request->all());
+        $user->createPlayer();
         return response()->json(['token' => $user->createToken($request->email)->plainTextToken], 201);
     }
 
