@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Utils\ItemUtils;
 use Illuminate\Support\ItemNotFoundException;
@@ -13,7 +13,7 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Auth::user()->items;
+        $items = Player::current()->items;
 
         return response()->json(
             ItemUtils::formatItems($items)
@@ -27,7 +27,7 @@ class ItemController extends Controller
                 'amount' => 'required|numeric|min:1',
             ]);
 
-            $items = Auth::user()->items;
+            $items = Player::current()->items;
 
             ItemUtils::deleteItem($items, $itemId, $validatedParams['amount']);
 

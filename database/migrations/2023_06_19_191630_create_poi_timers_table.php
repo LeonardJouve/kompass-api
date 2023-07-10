@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('poi_timers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('player_id');
+            $table->foreign('player_id')->references('id')->on('players');
             $table->string('xid');
             $table->timestamp('available_at');
             $table->timestamps();

@@ -12,12 +12,12 @@ class Item extends Model
 
     protected $hidden = [
         'id',
-        'user_id',
+        'player_id',
     ];
 
-    public function user(): BelongsTo
+    public function player(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Player::class);
     }
 
     public function available_item(): BelongsTo
