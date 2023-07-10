@@ -10,7 +10,7 @@ class AvailableItemSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('available_items')->insert([
+        $items = [
             ['name' => 'wood', 'category' => 'ressource'],
             ['name' => 'stick', 'category' => 'ressource'],
             ['name' => 'copper_powder', 'category' => 'ressource'],
@@ -27,14 +27,16 @@ class AvailableItemSeeder extends Seeder
             ['name' => 'berry_soup', 'category' => 'food'],
             ['name' => 'lettuce', 'category' => 'food'],
             ['name' => 'salad', 'category' => 'food'],
-        ]);
+        ];
 
-        $availableItems = DB::table('available_items')->get();
-        foreach ($availableItems as $availableItem) {
-            $name = $availableItem->name . '.png';
+        foreach ($items as $item) {
+            $name = $item['name'] . '.png';
             if (!Storage::disk('items')->exists($name)) {
                 throw new \Exception('Image ' . $name . ' not found');
             }
         }
+
+        DB::table('available_items')->insert($items);
+
     }
 }

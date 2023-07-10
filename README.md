@@ -20,3 +20,5 @@ php artisan storage:link
 php artisan db:seed --class=AvailableItemSeeder
 
 php artisan db:seed --class=DropSeeder
+
+php artisan db:seed --class=AvailableCraftSeeder
