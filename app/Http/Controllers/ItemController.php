@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AvailableItem;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use App\Utils\ItemUtils;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -49,7 +49,7 @@ class ItemController extends Controller
 
     public function image(Request $request, $itemId)
     {
-        $item = DB::table('available_items')->where('id', '=', $itemId)->first();
+        $item = AvailableItem::where('id', '=', $itemId)->first();
 
         if (!$item) {
             return response()->json([

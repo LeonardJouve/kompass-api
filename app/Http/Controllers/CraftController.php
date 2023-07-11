@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\AvailableCraft;
 use App\Models\Player;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,14 +13,16 @@ class CraftController extends Controller
     public function index()
     {
         $playerLevel = Player::current()->level;
-        $crafts = DB::table('available_crafts')->where('min_level', '<=', $playerLevel)->get();
+        $crafts = AvailableCraft::where('min_level', '<=', $playerLevel)->get()->map(function ($craft) {
+            return $craft->format();
+        });
 
         return response()->json($crafts, 200);
     }
 
     public function image(Request $request, $craftId)
     {
-        $craft = DB::table('available_crafts')->where('id', '=', $craftId)->first();
+        $craft = AvailableCraft::where('id', '=', $craftId)->first();
 
         if (!$craft) {
             return response()->json([
@@ -28,7 +30,7 @@ class CraftController extends Controller
             ], 422);
         }
 
-        $imageName = 'blueprint_' . $craft->name . '.png';
+        $imageName = 'blueprint_' . $craft->type . '.png';
 
         if (!Storage::disk('items')->exists($imageName)) {
             return response()->json([

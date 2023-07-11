@@ -11,15 +11,15 @@ class AvailableCraftSeeder extends Seeder
     public function run()
     {
         $crafts = [
-            ['name' => 'stick', 'category' => 'ressource', 'min_level' => 1],
-            ['name' => 'ingot', 'category' => 'ressource', 'min_level' => 2],
-            ['name' => 'plate', 'category' => 'ressource', 'min_level' => 5],
-            ['name' => 'soup', 'category' => 'food', 'min_level' => 3],
-            ['name' => 'salad', 'category' => 'food', 'min_level' => 4],
+            ['type' => 'stick', 'category' => 'ressource', 'min_level' => 1],
+            ['type' => 'ingot', 'category' => 'ressource', 'min_level' => 2],
+            ['type' => 'plate', 'category' => 'ressource', 'min_level' => 5],
+            ['type' => 'salad', 'category' => 'food', 'min_level' => 3],
+            ['type' => 'soup', 'category' => 'food', 'min_level' => 4],
         ];
 
         foreach ($crafts as $craft) {
-            $name = 'blueprint_' . $craft['name'] . '.png';
+            $name = 'blueprint_' . $craft['type'] . '.png';
             if (!Storage::disk('items')->exists($name)) {
                 throw new \Exception('Image ' . $name . ' not found');
             }

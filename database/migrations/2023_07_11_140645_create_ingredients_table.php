@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('available_crafts', function (Blueprint $table) {
+        Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('available_craft_id');
+            $table->foreign('available_craft_id')->references('id')->on('available_crafts');
             $table->string('type');
-            $table->string('category');
-            $table->integer('min_level');
+            $table->integer('min_tier')->default(1);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('available_crafts');
+        Schema::dropIfExists('ingredients');
     }
 };
