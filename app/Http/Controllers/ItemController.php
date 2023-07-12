@@ -69,4 +69,27 @@ class ItemController extends Controller
 
         return response($fileContent, 200)->header('Content-Type', 'image/png');
     }
+
+    public function imagePreview(Request $request, $type)
+    {
+        $craft = AvailableItem::where('type', '=', $type)->first();
+
+        if (!$craft) {
+            return response()->json([
+                'message' => 'api.rest.error.unprocessable_entity',
+            ], 422);
+        }
+
+        $imageName = 'blueprint_' . $type . '.png';
+
+        if (!Storage::disk('items')->exists($imageName)) {
+            return response()->json([
+                'message' => 'api.rest.error.not_found',
+            ], 404);
+        }
+
+        $fileContent = Storage::disk('items')->get($imageName);
+
+        return response($fileContent, 200)->header('Content-Type', 'image/png');
+    }
 }

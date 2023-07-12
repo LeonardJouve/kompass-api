@@ -24,29 +24,6 @@ class CraftController extends Controller
         return response()->json($crafts, 200);
     }
 
-    public function image(Request $request, $craftId)
-    {
-        $craft = Craft::where('id', '=', $craftId)->first();
-
-        if (!$craft) {
-            return response()->json([
-                'message' => 'api.rest.error.unprocessable_entity',
-            ], 422);
-        }
-
-        $imageName = 'blueprint_' . $craft->type . '.png';
-
-        if (!Storage::disk('items')->exists($imageName)) {
-            return response()->json([
-                'message' => 'api.rest.error.not_found',
-            ], 404);
-        }
-
-        $fileContent = Storage::disk('items')->get($imageName);
-
-        return response($fileContent, 200)->header('Content-Type', 'image/png');
-    }
-
     public function preview(Request $request)
     {
         try {

@@ -28,7 +28,7 @@ Route::get('opentripmap/search', [OpenTripMapController::class, 'search']);
 
 Route::resource('items', ItemController::class)->only(['index', 'destroy']);
 Route::get('items/image/{item_id}', [ItemController::class, 'image'])->where('item_id', '[0-9]+');
+Route::get('items/image-preview/{type}', [ItemController::class, 'imagePreview']);
 
 Route::resource('crafts', CraftController::class)->only(['index']);
-Route::get('crafts/image/{craft_id}', [CraftController::class, 'image'])->where('craft_id', '[0-9]+');
 Route::put('crafts/preview', [CraftController::class, 'preview']);

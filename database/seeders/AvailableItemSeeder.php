@@ -31,9 +31,13 @@ class AvailableItemSeeder extends Seeder
         ];
 
         foreach ($items as $item) {
-            $name = $item['name'] . '.png';
-            if (!Storage::disk('items')->exists($name)) {
-                throw new \Exception('Image ' . $name . ' not found');
+            $image = $item['name'] . '.png';
+            if (!Storage::disk('items')->exists($image)) {
+                throw new \Exception('Image ' . $image . ' not found');
+            }
+            $preview = 'blueprint_' . $item['type'] . '.png';
+            if (!Storage::disk('items')->exists($preview)) {
+                throw new \Exception('Image ' . $preview . ' not found');
             }
         }
 

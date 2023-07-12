@@ -18,13 +18,6 @@ class CraftSeeder extends Seeder
             ['type' => 'soup', 'category' => 'food', 'min_level' => 4],
         ];
 
-        foreach ($crafts as $craft) {
-            $name = 'blueprint_' . $craft['type'] . '.png';
-            if (!Storage::disk('items')->exists($name)) {
-                throw new \Exception('Image ' . $name . ' not found');
-            }
-        }
-
         DB::table('crafts')->insert($crafts);
     }
 }
