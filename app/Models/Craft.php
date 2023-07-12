@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class AvailableCraft extends Model
+class Craft extends Model
 {
     use HasFactory;
 
@@ -17,7 +17,7 @@ class AvailableCraft extends Model
 
     public function format()
     {
-        $recipe = Ingredient::where('available_craft_id', '=', $this->id)->get()->all();
+        $recipe = Ingredient::where('craft_id', '=', $this->id)->get()->all();
         return [
             'craft_id' => $this->id,
             'type' => $this->type,

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\AvailableCraft;
+use App\Models\Craft;
 use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -13,7 +13,7 @@ class CraftController extends Controller
     public function index()
     {
         $playerLevel = Player::current()->level;
-        $crafts = AvailableCraft::where('min_level', '<=', $playerLevel)->get()->map(function ($craft) {
+        $crafts = Craft::where('min_level', '<=', $playerLevel)->get()->map(function ($craft) {
             return $craft->format();
         });
 
@@ -22,7 +22,7 @@ class CraftController extends Controller
 
     public function image(Request $request, $craftId)
     {
-        $craft = AvailableCraft::where('id', '=', $craftId)->first();
+        $craft = Craft::where('id', '=', $craftId)->first();
 
         if (!$craft) {
             return response()->json([

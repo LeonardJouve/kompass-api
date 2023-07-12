@@ -10,7 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AvailableItemSeeder::class);
         $this->call(DropSeeder::class);
-        $this->call(AvailableCraftSeeder::class);
+        $this->call(CraftSeeder::class);
         $this->call(IngredientSeeder::class);
     }
 }

@@ -14,22 +14,15 @@ class IngredientSeeder extends Seeder
             'stick' => ['log', 'log'],
             'ingot' => ['powder', 'powder', 'log'],
             'plate' => ['ingot', 'ingot', 'log'],
-            'salad' => ['vegetable', ['type' => 'vegetable', 'min_tier' => 3]],
+            'salad' => ['vegetable', 'vegetable'],
             'soup' => ['vegetable', 'vegetable', 'log'],
         ]);
 
-        $availableCrafts = DB::table('available_crafts')->pluck('id', 'type');
+        $crafts = DB::table('crafts')->pluck('id', 'type');
 
-        $ingredients = $recipes->reduce(function ($acc, $ingredients, $craft) use ($availableCrafts) {
+        $ingredients = $recipes->reduce(function ($acc, $ingredients, $craft) use ($crafts) {
             foreach ($ingredients as $ingredient) {
-                if (is_string($ingredient)) {
-                    $type = $ingredient;
-                    $minTier = 1;
-                } else {
-                    $type = $ingredient['type'];
-                    $minTier = $ingredient['min_tier'];
-                }
-                $newIngredient = ['available_craft_id' => $availableCrafts[$craft], 'type' => $type, 'min_tier' => $minTier];
+                $newIngredient = ['craft_id' => $crafts[$craft], 'type' => $ingredient];
                 array_push($acc, $newIngredient);
             }
             return $acc;

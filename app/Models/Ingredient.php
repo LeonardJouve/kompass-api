@@ -12,11 +12,11 @@ class Ingredient extends Model
 
     protected $hidden = [
         'id',
-        'available_craft_id',
+        'craft_id',
     ];
 
-    public function available_craft(): BelongsTo
+    public function craft(): BelongsTo
     {
-        return $this->belongsTo(AvailableCraft::class);
+        return $this->belongsTo(Craft::class);
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-class AvailableCraftSeeder extends Seeder
+class CraftSeeder extends Seeder
 {
     public function run()
     {
@@ -25,6 +25,6 @@ class AvailableCraftSeeder extends Seeder
             }
         }
 
-        DB::table('available_crafts')->insert($crafts);
+        DB::table('crafts')->insert($crafts);
     }
 }
