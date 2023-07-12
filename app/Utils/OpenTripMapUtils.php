@@ -2,10 +2,10 @@
 
 namespace App\Utils;
 
+use App\Models\Drop;
 use App\Models\Item;
 use App\Models\Player;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class OpenTripMapUtils
@@ -55,8 +55,8 @@ class OpenTripMapUtils
 
     public static function searchItems($playerId, string $kind)
     {
-        $drops = DB::table('drops')->where('kind', '=', $kind)->get();
-        $garbage = DB::table('drops')->where('kind', '=', 'garbage')->get();
+        $drops = Drop::where('kind', '=', $kind)->get();
+        $garbage = Drop::where('kind', '=', 'garbage')->get();
         $amount = rand(1, env('OPEN_TRIP_MAP_SEARCH_MAX_ITEM_AMOUNT'));
 
         $items = new Collection();

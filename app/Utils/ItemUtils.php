@@ -2,17 +2,20 @@
 
 namespace App\Utils;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\AvailableItem;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class ItemUtils
 {
+    // TODO handle throw
     public static function formatItem($item)
     {
         $newItem = clone $item;
-        $availableItem = DB::table('available_items')->where('id', '=', $newItem->item_id)->first();
+        $availableItem = AvailableItem::where('id', '=', $newItem->item_id)->firstOrFail();
         $newItem->name = $availableItem->name;
         $newItem->category = $availableItem->category;
+        $newItem->type = $availableItem->type;
+        $newItem->tier = $availableItem->tier;
 
         return $newItem;
     }

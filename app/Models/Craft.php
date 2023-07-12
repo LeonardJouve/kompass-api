@@ -17,7 +17,7 @@ class Craft extends Model
 
     public function format()
     {
-        $recipe = Ingredient::where('craft_id', '=', $this->id)->get()->all();
+        $recipe = Ingredient::where('craft_id', '=', $this->id)->get()->sortBy('id');
         return [
             'craft_id' => $this->id,
             'type' => $this->type,

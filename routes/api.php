@@ -31,3 +31,4 @@ Route::get('items/image/{item_id}', [ItemController::class, 'image'])->where('it
 
 Route::resource('crafts', CraftController::class)->only(['index']);
 Route::get('crafts/image/{craft_id}', [CraftController::class, 'image'])->where('craft_id', '[0-9]+');
+Route::put('crafts/preview', [CraftController::class, 'preview']);
