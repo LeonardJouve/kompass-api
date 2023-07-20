@@ -4,7 +4,6 @@ namespace App\Utils;
 
 use App\Models\Drop;
 use App\Models\Item;
-use App\Models\Player;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -46,11 +45,9 @@ class OpenTripMapUtils
         $item->item_id = $selectedDrop->item_id;
         $item->amount = $amount;
 
-        $items = Player::current()->items;
-
-        ItemUtils::mergeItem($items, $item);
-
-        return ItemUtils::formatItem($item);
+        return $item
+            ->merge()
+            ->format();
     }
 
     public static function searchItems($playerId, string $kind)
@@ -67,8 +64,8 @@ class OpenTripMapUtils
             $itemAlreadyExists = false;
 
             $items->transform(function ($item) use ($newItem, &$itemAlreadyExists) {
-                if (strcmp($item->item_id, $newItem->item_id) === 0) {
-                    $item->amount += $newItem->amount;
+                if (strcmp($item['item_id'], $newItem['item_id']) === 0) {
+                    $item['amount'] += $newItem['amount'];
                     $itemAlreadyExists = true;
                 }
                 return $item;

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AvailableItem;
 use App\Models\Player;
 use Illuminate\Http\Request;
-use App\Utils\ItemUtils;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
@@ -15,11 +14,11 @@ class ItemController extends Controller
 {
     public function index()
     {
-        $items = Player::current()->items;
+        $items = Player::current()->items->map(function ($item) {
+            return $item->format();
+        });
 
-        return response()->json(
-            ItemUtils::formatItems($items)
-        , 200);
+        return response()->json($items, 200);
     }
 
     public function destroy(Request $request, $itemId)
@@ -29,9 +28,11 @@ class ItemController extends Controller
                 'amount' => 'required|numeric|min:1',
             ]);
 
-            $items = Player::current()->items;
-
-            ItemUtils::deleteItem($items, $itemId, $validatedParams['amount']);
+            Player::current()
+                ->items
+                ->where('item_id', '=', $itemId)
+                ->firstOrFail()
+                ->remove($validatedParams['amount']);
 
             return response()->json([
                 'status' => 'ok',

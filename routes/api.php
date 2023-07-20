@@ -30,5 +30,5 @@ Route::resource('items', ItemController::class)->only(['index', 'destroy']);
 Route::get('items/image/{item_id}', [ItemController::class, 'image'])->where('item_id', '[0-9]+');
 Route::get('items/image-preview/{type}', [ItemController::class, 'imagePreview']);
 
-Route::resource('crafts', CraftController::class)->only(['index']);
+Route::resource('crafts', CraftController::class)->only(['index', 'store']);
 Route::put('crafts/preview', [CraftController::class, 'preview']);
