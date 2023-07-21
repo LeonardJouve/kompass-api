@@ -6,12 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PoiTimer extends Model
+class Ingredient extends Model
 {
     use HasFactory;
 
-    public function player(): BelongsTo
+    protected $hidden = [
+        'id',
+        'craft_id',
+    ];
+
+    public function craft(): BelongsTo
     {
-        return $this->belongsTo(Player::class);
+        return $this->belongsTo(Craft::class);
     }
 }

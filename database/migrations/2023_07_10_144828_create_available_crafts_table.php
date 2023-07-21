@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('poi_timers', function (Blueprint $table) {
+        Schema::create('crafts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('player_id');
-            $table->foreign('player_id')->references('id')->on('players');
-            $table->string('xid');
-            $table->timestamp('available_at');
-            $table->timestamps();
+            $table->string('type');
+            $table->string('category');
+            $table->integer('min_level');
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('poi_timers');
+        Schema::dropIfExists('crafts');
     }
 };

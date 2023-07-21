@@ -8,14 +8,14 @@ use Illuminate\Support\Collection;
 
 class DropSeeder extends Seeder
 {
-    
+
     private function transformDrops(string $kind, Collection &$drops)
     {
         $items = DB::table('available_items')->pluck('id', 'name');
         $drops->transform(function ($drop) use ($items, $kind) {
             $drop['kind'] = $kind;
             $drop['item_id'] = $items[$drop['name']];
-            $drop['rate'] ??= null; 
+            $drop['rate'] ??= null;
             unset($drop['name']);
             return $drop;
         });
@@ -62,8 +62,8 @@ class DropSeeder extends Seeder
         self::transformDrops('adult', $adult);
 
         $garbage = new Collection([
-            ['amount' => 6, 'name' => 'wood'],
-            ['amount' => 4, 'name' => 'stick'],
+            ['amount' => 6, 'name' => 'oak_log'],
+            ['amount' => 4, 'name' => 'oak_stick'],
             ['amount' => 3, 'name' => 'copper_powder'],
             ['amount' => 2, 'name' => 'zinc_powder'],
         ]);
@@ -81,7 +81,7 @@ class DropSeeder extends Seeder
             ->merge($amusements)
             ->merge($adult)
             ->merge($garbage);
-        
+
         DB::table('drops')->insert($drops->all());
     }
 }

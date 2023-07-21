@@ -2,10 +2,9 @@
 
 namespace App\Utils;
 
+use App\Models\Drop;
 use App\Models\Item;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class OpenTripMapUtils
@@ -20,7 +19,7 @@ class OpenTripMapUtils
         return null;
     }
 
-    private static function searchItem($userId, $drops, $garbage)
+    private static function searchItem($playerId, $drops, $garbage)
     {
         $selectedDrop = null;
         $target = rand(1, 100);
@@ -42,33 +41,31 @@ class OpenTripMapUtils
         $amount = rand(1, $selectedDrop->amount);
 
         $item = new Item();
-        $item->user_id = $userId;
+        $item->player_id = $playerId;
         $item->item_id = $selectedDrop->item_id;
         $item->amount = $amount;
 
-        $items = Auth::user()->items;
-
-        ItemUtils::mergeItem($items, $item);
-
-        return ItemUtils::formatItem($item);
+        return $item
+            ->merge()
+            ->format();
     }
 
-    public static function searchItems($userId, string $kind)
+    public static function searchItems($playerId, string $kind)
     {
-        $drops = DB::table('drops')->where('kind', '=', $kind)->get();
-        $garbage = DB::table('drops')->where('kind', '=', 'garbage')->get();
+        $drops = Drop::where('kind', '=', $kind)->get();
+        $garbage = Drop::where('kind', '=', 'garbage')->get();
         $amount = rand(1, env('OPEN_TRIP_MAP_SEARCH_MAX_ITEM_AMOUNT'));
 
         $items = new Collection();
-        
+
         for ($i = 0; $i < $amount; $i++) {
-            $newItem = self::searchItem($userId, $drops, $garbage);
-            
+            $newItem = self::searchItem($playerId, $drops, $garbage);
+
             $itemAlreadyExists = false;
-            
+
             $items->transform(function ($item) use ($newItem, &$itemAlreadyExists) {
-                if (strcmp($item->item_id, $newItem->item_id) === 0) {
-                    $item->amount += $newItem->amount;
+                if (strcmp($item['item_id'], $newItem['item_id']) === 0) {
+                    $item['amount'] += $newItem['amount'];
                     $itemAlreadyExists = true;
                 }
                 return $item;

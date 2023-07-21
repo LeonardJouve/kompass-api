@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Player;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Utils\OpenTripMapUtils;
-use Illuminate\Support\Facades\Auth;
 use App\Models\PoiTimer;
 use Illuminate\Support\Collection;
 
@@ -34,9 +34,9 @@ class OpenTripMapController extends Controller
             ], 503);
         }
 
-        $poiTimers = Auth::user()->poiTimers;
+        $poiTimers = Player::current()->poiTimers;
         $pois = new Collection($response->json());
-        
+
         $pois->transform(function ($poi) use ($poiTimers) {
             $poiTimer = $poiTimers->first(function ($poiTimer) use ($poi) {
                 return strcmp($poiTimer->xid, $poi['xid']) === 0;
@@ -58,7 +58,7 @@ class OpenTripMapController extends Controller
         $response = Http::get('http://api.opentripmap.com/0.1/en/places/xid/' . $validatedParams['xid'], [
             'apikey' => env('OPEN_TRIP_MAP_API_KEY'),
         ]);
- 
+
         if (!$response->successful()) {
             return response()->json([
                 'message' => 'api.rest.error.not_found',
@@ -75,10 +75,9 @@ class OpenTripMapController extends Controller
             ], 422);
         }
 
-        $user = Auth::user();
-        $userId = $user->id;
-
-        $poiTimers = $user->poiTimers;
+        $player = Player::current();
+        $playerId = $player->id;
+        $poiTimers = $player->poiTimers;
 
         foreach ($poiTimers as $poiTimer) {
             if (now() > $poiTimer->available_at) {
@@ -92,12 +91,12 @@ class OpenTripMapController extends Controller
         }
 
         $poiTimer = new PoiTimer();
-        $poiTimer->user_id = $userId;
+        $poiTimer->player_id = $playerId;
         $poiTimer->xid = $validatedParams['xid'];
         $poiTimer->available_at = now()->addMinutes(env('OPEN_TRIP_MAP_POI_COOLDOWN'));
         $poiTimer->save();
-        
-        $items = OpenTripMapUtils::searchItems($userId, $kind);
+
+        $items = OpenTripMapUtils::searchItems($playerId, $kind);
 
         return response()->json($items, 200);
     }
