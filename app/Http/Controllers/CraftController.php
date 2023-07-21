@@ -9,6 +9,7 @@ use App\Models\Ingredient;
 use App\Models\Item;
 use App\Models\Player;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -47,26 +48,47 @@ class CraftController extends Controller
             }
 
             $itemsAmount = $selectedItems->reduce(function ($carry, $selectedItem) use ($validatedParams) {
-                $itemAmount = $carry[$selectedItem->item_id] ?? 0;
-                $itemAmount += $validatedParams['amount'];
-                $carry[$selectedItem->item_id] = $itemAmount;
-                if ($selectedItem->amount < $itemAmount) {
+                $index = $carry->search(function ($item) use ($selectedItem) {
+                    return $item['item_id'] === $selectedItem->item_id;
+                });
+                if ($index === false) {
+                    $item = [
+                        'item_id' => $selectedItem->item_id,
+                        'amount' => $validatedParams['amount'],
+                    ];
+                    $carry->push($item);
+                } else {
+                    $item = $carry->get($index);
+                    $item['amount'] += $validatedParams['amount'];
+                    $carry->pull($index);
+                    $carry->push($item);
+                }
+
+                if ($selectedItem->amount < $item['amount']) {
                     throw new UnprocessableEntityHttpException();
                 }
                 return $carry;
-            }, []);
+            }, new Collection());
 
-            foreach ($itemsAmount as $id => $amount) {
-                $selectedItem = $selectedItems->where('item_id', '=', $id)->firstOrFail();
-                $selectedItem->remove($amount);
+            foreach ($itemsAmount as $itemAmount) {
+                $selectedItem = $selectedItems->firstOrFail(function ($selectedItem) use ($itemAmount) {
+                    return $selectedItem->item_id === $itemAmount['item_id'];
+                });
+                $selectedItem->remove($itemAmount['amount']);
             }
 
             $item = new Item();
             $item->item_id = $result->id;
             $item->player_id = $player->id;
             $item->amount = $validatedParams['amount'];
+            $item->merge();
 
-            return response()->json($item->merge()->format(), 200);
+            $result = $item->format();
+
+            return response()->json([
+                'result' => $result,
+                'removed' => $itemsAmount->values(),
+            ], 200);
         } catch (ItemNotFoundException $error) {
             return response()->json([
                 'message' => 'api.rest.error.not_found',
